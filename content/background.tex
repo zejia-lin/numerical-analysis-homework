@@ -1,0 +1,46 @@
+
+\section{引言}
+
+使用参考文献的示例\cite{vaswani2017attention}\cite{DBLP:journals/corr/abs-1802-05751}\cite{mott2019towards}\cite{silver2016mastering}.
+
+插入代码的示例:
+
+\begin{lstlisting}[style=sysupython]
+def main():
+    print("hello world")
+\end{lstlisting}
+代码高亮风格可在\texttt{sysulab.sty}中修改.
+\begin{lstlisting}[style=sysucpp]
+#include <iostream>
+using namespace std;
+int main() {
+    printf(123);
+    return 0;
+}
+\end{lstlisting}
+
+伪代码示例：
+
+
+\begin{algorithm}[!htbp]
+    \caption{水印嵌入算法}
+    \label{algo:embed}
+    \begin{algorithmic}[1] %每行显示行号
+        \Require $A\ (m\times n)$图像矩阵, $W\ (s\times t)$水印矩阵，$C_{mod}$求余常数
+        \Ensure $\hat{A}\ (m\times n)$含水印图像矩阵
+        \Function {EmbedWatermark}{$A,\ W,\ C_{mod}$}
+        \State $cA, cH, cV, cD \gets \Call{computeDWT}{A} $ \Comment{获取DWT各分量}
+        \State $numBlocks \gets \left\lfloor\dfrac{m}{8}\right\rfloor\cdot \left\lfloor\dfrac{n}{8}\right\rfloor$ \Comment{获取分块数量}
+        \ParFor {$i = 0 \to numBlocks$} \Comment{并行计算每个$4\times 4$分块}
+        \State $D \gets \Call{computeDCT}{cA_i} $ \Comment{计算DCT}
+        \State $U, S, V \gets \Call{computeSVD}{D}$ \Comment{计算SVD}
+        \State $b \gets W_{i \mod numBlocks}$ \Comment{对水印进行循环嵌入，获取该分块嵌入的水印1bit}
+        \State $\hat{S_0} = \left(\left\lfloor\dfrac{S_0}{mod}\right\rfloor + \dfrac{1}{4} + \dfrac{b}{2} \right) * C_{mod}$ \Comment{将该bit嵌入到最大奇异值中}
+        \State $\hat{D} \gets U \cdot \hat{S} \cdot V^T$ \Comment{还原DCT系数矩阵}
+        \State $\hat{cA_i} \gets \Call{computeIDCT}{\hat{D}}$ \Comment{DCT逆变换}
+        \EndParFor
+        \State $\hat{A} \gets \Call{computeIDWT}{\hat{cA}, cH, cV, cD}$ \Comment{DWT逆变换}
+        \State \Return $\hat{A}$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}

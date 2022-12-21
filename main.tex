@@ -30,6 +30,25 @@
 \usepackage{xcolor}
 \usepackage{xeCJK}
 \usepackage{subfigure}
+\usepackage{subfiles}
+
+% 取消超链接框框
+\hypersetup{hidelinks} 
+
+% 设置算法
+\floatname{algorithm}{算法}
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
+% declaration of the parallel for
+\algblock{ParFor}{EndParFor}
+\algnewcommand\algorithmicparfor{\textbf{parallel for}}
+\algnewcommand\algorithmicpardo{\textbf{do}}
+\algnewcommand\algorithmicendparfor{\textbf{end parallel for}}
+\algrenewtext{ParFor}[1]{\algorithmicparfor\ #1\ \algorithmicpardo}
+\algrenewtext{EndParFor}{\algorithmicendparfor}
+
+% 关键词
+\providecommand{\keywords}[1]{\vspace{.6em}\textbf{关键词}\quad #1\vspace{.6em}}
 
 % \usepackage{mathpazo} % 设置字体
 
@@ -45,14 +64,14 @@
 \date{}
 
 % set experiment report title, used in next.
-\newcommand{\rtitle}{实验报告名称}
-\newcommand{\lecturename}{课程名称}
-\newcommand{\instructorname}{任课教师}
-\newcommand{\sgrade}{2018}
+\newcommand{\rtitle}{模板模板}
+\newcommand{\lecturename}{ABCD}
+\newcommand{\instructorname}{EFGI}
+\newcommand{\sgrade}{1234}
 \newcommand{\smajor}{计算机科学与技术}
-\newcommand{\sname}{你的名字}
-\newcommand{\sid}{你的学号}
-\newcommand{\semail}{president@mail.sysu.edu.cn} % 填你的邮箱
+\newcommand{\sname}{Chisato}
+\newcommand{\sid}{1234}
+\newcommand{\sclass}{1234}
 
 \begin{document}
 
@@ -67,10 +86,10 @@
 \centerline{\LARGE \rtitle}
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.7]{sysu_logo.png}
+    \includegraphics[width=.2\linewidth]{sysu_logo.png}
 \end{figure} 
 % set lecture information
-\centerline{Lecture: \textbf{\lecturename} \qquad Instructor: \textbf{\instructorname}}
+\centerline{\textbf{课程: \lecturename} \qquad \textbf{任课教师: \instructorname}}
 % set head table
 \begin{table}[h]
     \centering
@@ -81,7 +100,7 @@
         \hline
         \cellcolor{GRay} 学号 & \sid &\cellcolor{GRay} 姓名 & \sname \\
         \hline
-        \cellcolor{GRay} 邮箱 & \href{mailto:\semail}{\semail} &\cellcolor{GRay} 日期 & \today \\
+        \cellcolor{GRay} 班级 & \sclass &\cellcolor{GRay} 日期 & \today \\
         \hline
         % \bottomrule
     \end{tabular}    
@@ -89,25 +108,19 @@
 
 %%%% DO NOT MODIFY ABOVE
 
-\section{实验目的}
+\subfile{content/abstract}
 
-使用参考文献的示例\cite{vaswani2017attention}.
+\subfile{content/background}
 
-插入代码的示例:
+\subfile{content/related}
 
-\begin{lstlisting}[style=sysupython]
-def main():
-    print("hello world")
-\end{lstlisting}
-代码高亮风格可在\texttt{sysulab.sty}中修改.
-\begin{lstlisting}[style=sysucpp]
-#include <iostream>
-using namespace std;
-int main() {
-    printf(123);
-    return 0;
-}
-\end{lstlisting}
+\subfile{content/design}
+
+\subfile{content/experiment}
+
+\subfile{content/conclusion}
+
+
 
 
 %

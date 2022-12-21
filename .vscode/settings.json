@@ -1,4 +1,5 @@
 {
+    "editor.wordWrap": "bounded",
     // latex settings
     "latex-workshop.latex.tools": [
         {
@@ -8,7 +9,6 @@
                 "-synctex=1",
                 "-interaction=nonstopmode",
                 "-file-line-error",
-                "-pdf",
                 "%DOCFILE%"
             ]
         },
