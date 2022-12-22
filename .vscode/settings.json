@@ -13,7 +13,6 @@
                 "%DOCFILE%"
             ]
         },
-
         {
             "name": "pdflatex",
             "command": "pdflatex",
