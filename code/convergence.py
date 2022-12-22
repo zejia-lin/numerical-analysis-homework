@@ -44,6 +44,10 @@ def taylor_inv(fenmu, order):
     inv = 1 / fenmu
     return 1 / inv.series(e, 0, order)
 
+def texify(algo):
+    sp.print_latex(sp.collect(sp.expand(algo), e))
+    print()
+
 # %%
 fx = f(e)
 fx
@@ -53,42 +57,41 @@ dx = df(e)
 dx
 
 # %%
-1 / taylor_inv(df(e), 6)
+print("公式18")
+texify(1 / taylor_inv(df(e), 6))
 
 # %%
 fx_div_dx = sp.collect(sp.expand(fx / taylor_inv(df(e), 6)), e)
-fx_div_dx
+print("公式19")
+texify(fx_div_dx)
 
 # %%
 y = x - fx_div_dx
-y
+print("公式20")
+texify(y)
 
 # %%
 dy = df(y - alpha, True)
 
 # %%
-sp.collect(dy, e)
+print("公式21")
+texify(sp.collect(dy, e))
 
 # %%
 z = x - 2 * fx / taylor_inv(dx + dy, 6)
-sp.collect(sp.expand(z), e)
+print("公式24")
+texify(sp.collect(sp.expand(z), e))
 
 # %%
-# fz = f(z - alpha)
-
-# %%
-# z = (c2**2 + c3/2)*e3+alpha
 fz = f(z-alpha)
 dz = df(z-alpha)
-sp.expand(z - fz / taylor_inv(dz, 6))
-
-# %% [markdown]
-# # Playground
+print("公式25")
+texify(sp.expand(z - fz / taylor_inv(dz, 6)))
 
 # %%
 fy = f(y - alpha)
-# newx = z - 2 * fz / taylor_inv(dz + dy, 6)
-newx = y - fy / (fz - fy) * (z - y)
-sp.collect(sp.expand(newx), e)
+newx = z - 2 * fz / taylor_inv(dz + dy, 6)
+print("公式27")
+texify(sp.collect(sp.expand(newx), e))
 
 

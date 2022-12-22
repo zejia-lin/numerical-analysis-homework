@@ -33,7 +33,7 @@
 
 \subsection{收敛阶证明}
 
-我参考了\cite{kou2006modified}和\cite{eftekhari2014new}使用的技巧对公式\ref{eq:my}的收敛阶进行证明。由于涉及到\textbf{6阶泰勒展开}的计算较为复杂，因此我使用了sympy\footnotemark[1]进行符号计算和化简，\textbf{代码在附录2中，本部分所推导的结果皆由该代码产生，其正确性保证了本文推导结果的正确}。由于篇幅有限，部分泰勒展开用省略号表示。
+我参考了\cite{kou2006modified}和\cite{eftekhari2014new}使用的技巧对公式\ref{eq:my}的收敛阶进行证明。由于涉及到\textbf{6阶泰勒展开}的计算较为复杂，因此我使用了sympy\footnotemark[1]进行符号计算和化简，\textbf{代码在附录2和\texttt{code/convergence.py}中，本部分所推导的结果皆由该代码产生，其正确性保证了本文推导结果的正确}。由于篇幅有限，部分泰勒展开用省略号表示。
 
 假设函数$f(x)$的单根是$\alpha$且$f'(\alpha)\neq 0$，记截断误差$e_n = \alpha - x_n$，对$f(x_n)$在$\alpha$处进行泰勒展开得：
 \begin{equation}
@@ -66,7 +66,7 @@
     \label{eq:fx-div-dx}
     \dfrac{f(x_n)}{f'(x_n)} = \dfrac{\sum\limits_{k=1}^6 c_ke_n^k + O(e_n^7)}{1 + \sum\limits_{k=2}^6 kc_ke_n^{k-1} + O(e_n^6) },
 \end{equation}
-记$\theta = 1 + \sum\limits_{k=2}^6 kc_ke_n^{k-1} + O(e_n^6) $，显然$\lim\limits_{n\to \infty}\theta = 0$，因此在$\theta = 0$处对分母进行泰勒展开有：
+记$\theta = 1 + \sum\limits_{k=2}^6 kc_ke_n^{k-1} + O(e_n^6) $，显然$\lim\limits_{n\to \infty}\theta = 0$，因此在$\theta = 0$处对分母进行泰勒展开有（代码第61行）：
 \begin{equation}
     \label{eq:fenmu-taylor}
     \begin{aligned}
@@ -76,7 +76,7 @@
         &\qquad + e_n^{5} \left(- 32 c_{2}^{5} + 96 c_{2}^{3} c_{3} - 48 c_{2}^{2} c_{4} - 54 c_{2} c_{3}^{2} + 20 c_{2} c_{5} + 24 c_{3} c_{4} - 6 c_{6}\right) + O\left(e_n^{6}\right),
     \end{aligned}
 \end{equation}
-将公式\ref{eq:fenmu-taylor}代入公式\ref{eq:fx-div-dx}并化简，由于化简过程较为复杂，为了保证准确性，再次使用sympy进行验证（代码见附录2）：
+将公式\ref{eq:fenmu-taylor}代入公式\ref{eq:fx-div-dx}并化简有（代码第65行）：
 \begin{equation}
     \begin{aligned}
         \dfrac{f(x_n)}{f'(x_n)} &= e - c_{2} e_n^{2} + e_n^{3} \cdot \left(2 c_{2}^{2} - 2 c_{3}\right) + e_n^{4} \cdot \left(- 4 c_{2}^{3} + 7 c_{2} c_{3} - 3 c_{4}\right) \\
@@ -84,7 +84,7 @@
         &\qquad + e_n^{6} \cdot \left(- 16 c_{2}^{5} + 52 c_{2}^{3} c_{3} - 28 c_{2}^{2} c_{4} - 33 c_{2} c_{3}^{2} + 13 c_{2} c_{5} + 17 c_{3} c_{4} - 5 c_{6}\right) + O\left(e_n^{7}\right),
     \end{aligned}
 \end{equation}
-因此求得$y_n$的泰勒展开：
+因此求得$y_n$的泰勒展开（代码第70行）：
 \begin{equation}
     \label{eq:taylor-y}
     \begin{aligned}
@@ -94,7 +94,7 @@
         &\qquad + e_n^{6} \cdot \left(16 c_{2}^{5} - 52 c_{2}^{3} c_{3} + 28 c_{2}^{2} c_{4} + 33 c_{2} c_{3}^{2} - 13 c_{2} c_{5} - 17 c_{3} c_{4} + 5 c_{6}\right) + O\left(e_n^{7}\right),
     \end{aligned}
 \end{equation}
-\textbf{公式\ref{eq:taylor-y}同时也证明了牛顿法是二阶收敛的}，截断误差为$\dfrac{f''(\alpha)}{2f'(\alpha)}e_n^2 + O(e_n^3)$。继续对$f'(y_n)$在$\alpha$处做泰勒展开有：
+\textbf{公式\ref{eq:taylor-y}同时也证明了牛顿法是二阶收敛的}，截断误差为$\dfrac{f''(\alpha)}{2f'(\alpha)}e_n^2 + O(e_n^3)$。继续对$f'(y_n)$在$\alpha$处做泰勒展开有（代码第77行）：
 \begin{equation}
     \label{eq:dy}
     \begin{aligned}
@@ -114,7 +114,7 @@
         x_n - \dfrac{2f(x_n)}{f'(x_n) + f'(y_n)} &= \alpha + e_n - \dfrac{2\left[ \sum\limits_{k=1}^6 c_ke_n^k + O(e_n^7) \right]}{1 + c_2e_n+ \left(c_2^2 + \dfrac{3}{2}c_3  \right)e_n^2 + \cdots + O(e_n^6)},
     \end{aligned}
 \end{equation}
-使用与公式\ref{eq:fenmu-taylor}相似的技巧，对分母部分进行泰勒展开得：
+使用与公式\ref{eq:fenmu-taylor}相似的技巧，对分母部分进行泰勒展开得（代码第82行）：
 \begin{equation}
     \label{eq:taylor-z}
     \begin{aligned}
@@ -124,7 +124,7 @@
         &\qquad + O\left(e_n^{7}\right),
     \end{aligned}
 \end{equation}
-\textbf{公式\ref{eq:taylor-z}同时也证明了序列$\{z_n\}_{n=0}^\infty$是三阶收敛的}，即使用一阶导数的前向差商来计算二阶导数的Halley方法是仍是三阶收敛的。继续计算$f(z_n)$和$f'(z_n)$的泰勒展开，使用与公式\ref{eq:fx-taylor}-\ref{eq:taylor-y}相同的方法，可以得到$x_{n+1}$的泰勒展开：
+\textbf{公式\ref{eq:taylor-z}同时也证明了序列$\{z_n\}_{n=0}^\infty$是三阶收敛的}，即使用一阶导数的前向差商来计算二阶导数的Halley方法是仍是三阶收敛的。继续计算$f(z_n)$和$f'(z_n)$的泰勒展开，使用与公式\ref{eq:fx-taylor}-\ref{eq:taylor-y}相同的方法，可以得到$x_{n+1}$的泰勒展开（代码第88行）：
 \begin{equation}
     \label{eq:taylor-newx}
     x_{n+1} = \alpha + e^{6} \cdot \left(c_{2}^{5} + c_{2}^{3} c_{3} + \frac{c_{2} c_{3}^{2}}{4}\right) + O\left(e^{7}\right),
@@ -143,11 +143,11 @@
         x_{n+1} &= z_n - \dfrac{2f(z_n)}{f'(y_n) + f'(z_n)}
     \end{cases},
 \end{equation}
-附录2的最后几行代码展示了计算过程，与公式\ref{eq:dy}-\ref{eq:taylor-newx}类似，可以得到$x_{n+1}$的泰勒展开：
+附录2的第94行代码展示了收敛性证明的计算过程，使用与公式\ref{eq:dy}-\ref{eq:taylor-newx}类似的方法，可以得到$x_{n+1}$的泰勒展开：
 \begin{equation}
-    e^{5} \cdot \left(c_{2}^{4} + \frac{c_{2}^{2} c_{3}}{2}\right) + e^{6} \cdot \left(- 5 c_{2}^{5} + \frac{5 c_{2}^{3} c_{3}}{2} + c_{2}^{2} c_{4} + c_{2} c_{3}^{2}\right) + \alpha + O\left(e^{7}\right),
+    x_{n+1} = e^{5} \cdot \left(c_{2}^{4} + \frac{c_{2}^{2} c_{3}}{2}\right) + e^{6} \cdot \left(- 5 c_{2}^{5} + \frac{5 c_{2}^{3} c_{3}}{2} + c_{2}^{2} c_{4} + c_{2} c_{3}^{2}\right) + \alpha + O\left(e^{7}\right),
 \end{equation}
-\textbf{因此新得到的公式\ref{eq:my-interesting}只有5阶收敛}，但它的计算量比牛顿法还多（同样需要计算$f(z_n)$和$f'(z_n)$，且需要额外计算一次加法和乘法），进一步让我感受到了牛顿法无可比拟的优势。
+\textbf{因此公式\ref{eq:my-interesting}只有5阶收敛}，但它的计算量比牛顿法还多（同样需要计算$f(z_n)$和$f'(z_n)$，且需要额外计算一次加法和乘法），进一步让我感受到了牛顿法无可比拟的优势。
 
 
 
