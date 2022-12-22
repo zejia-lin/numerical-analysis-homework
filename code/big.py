@@ -2,7 +2,8 @@
 import sympy as sp
 
 # %%
-c1, c2, c3, c4, c5, c6 = sp.symbols('c1 c2 c3 c4 c5 c6')
+c2, c3, c4, c5, c6 = sp.symbols('c2 c3 c4 c5 c6')
+c1 = 1
 alpha = sp.symbols('alpha')
 e = sp.symbols('e')
 x = alpha + e
@@ -73,12 +74,21 @@ z = x - 2 * fx / taylor_inv(dx + dy, 6)
 sp.collect(sp.expand(z), e)
 
 # %%
-fz = f(z - alpha)
+# fz = f(z - alpha)
 
 # %%
-newx = z - 2 * fz / taylor_inv(dx + dy, 6)
+# z = (c2**2 + c3/2)*e3+alpha
+fz = f(z-alpha)
+dz = df(z-alpha)
+sp.expand(z - fz / taylor_inv(dz, 6))
+
+# %% [markdown]
+# # Playground
 
 # %%
-newx
+fy = f(y - alpha)
+# newx = z - 2 * fz / taylor_inv(dz + dy, 6)
+newx = y - fy / (fz - fy) * (z - y)
+sp.collect(sp.expand(newx), e)
 
 

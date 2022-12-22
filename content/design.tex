@@ -33,7 +33,9 @@
 
 \subsection{收敛阶证明}
 
-我参考了\cite{kou2006modified}和\cite{eftekhari2014new}使用的技巧对公式\ref{eq:my}的收敛阶进行证明。假设函数$f(x)$的单根是$\alpha$且$f'(\alpha)\neq 0$，记截断误差$e_n = \alpha - x_n$，对$f(x_n)$在$\alpha$处进行泰勒展开得：
+我参考了\cite{kou2006modified}和\cite{eftekhari2014new}使用的技巧对公式\ref{eq:my}的收敛阶进行证明，由于涉及到6阶泰勒展开，计算较为复杂，因此我使用了sympy进行符号计算和化简，代码在附录2中。
+
+假设函数$f(x)$的单根是$\alpha$且$f'(\alpha)\neq 0$，记截断误差$e_n = \alpha - x_n$，对$f(x_n)$在$\alpha$处进行泰勒展开得：
 \begin{equation}
     \label{eq:fx-taylor}
     \begin{aligned}
