@@ -31,6 +31,8 @@
 \usepackage{xeCJK}
 \usepackage{subfigure}
 \usepackage{subfiles}
+\usepackage{xr}
+\usepackage{minted}
 
 % 取消超链接框框
 \hypersetup{hidelinks} 
@@ -64,14 +66,14 @@
 \date{}
 
 % set experiment report title, used in next.
-\newcommand{\rtitle}{模板模板}
-\newcommand{\lecturename}{ABCD}
-\newcommand{\instructorname}{EFGI}
-\newcommand{\sgrade}{1234}
+\newcommand{\rtitle}{六阶收敛的非线性方程组求根方法}
+\newcommand{\lecturename}{数值分析}
+\newcommand{\instructorname}{黎卫兵/张雨浓}
+\newcommand{\sgrade}{2022}
 \newcommand{\smajor}{计算机科学与技术}
-\newcommand{\sname}{Chisato}
-\newcommand{\sid}{1234}
-\newcommand{\sclass}{1234}
+\newcommand{\sname}{林泽佳}
+\newcommand{\sid}{22214373}
+\newcommand{\sclass}{学硕2班}
 
 \begin{document}
 
@@ -112,7 +114,7 @@
 
 \subfile{content/background}
 
-\subfile{content/related}
+% \subfile{content/related}
 
 \subfile{content/design}
 
@@ -120,15 +122,14 @@
 
 \subfile{content/conclusion}
 
-
-
-
 %
 % References will then be sorted and formatted in the correct style
 %
 \clearpage
-
 \bibliographystyle{unsrt}
 \bibliography{ref}
+
+\clearpage
+\subfile{content/appendix}
 
 \end{document}

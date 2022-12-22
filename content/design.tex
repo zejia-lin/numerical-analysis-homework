@@ -1,2 +1,131 @@
 
-\section{算法设计}
+\section{方法设计}
+
+\subsection{方法推导}
+
+在三阶的Halley方法的基础上再进行一次牛顿法迭代得到的序列，显然是六阶收敛的：
+\begin{equation}
+    \label{eq:halley}
+    \begin{cases}
+        z_n &= x_n - \dfrac{2f(x_n)f'(x_n)}{2[f'(x_n)]^2-f(x_n)f''(x_n)}, \\
+        x_{n+1} &= x_n - \dfrac{f(z_n)}{f'(z_n)}   
+    \end{cases}
+\end{equation}
+
+参考\cite{eftekhari2014new}中的方法，希望消去$\{z_n\}_{n=0}^\infty$中的二阶导数，如果记$y_n = x_n - \dfrac{f(x)}{f'(x)}$，则有$\lim\limits_{n\to \infty}\dfrac{y_n}{x_n} = 1$，因此二阶导数可以使用一阶导计算前向差商近似为：
+\begin{equation}
+    \label{eq:second-derivative}
+    \begin{aligned}
+        f''(x_n) &= \lim\limits_{n\to \infty}\dfrac{f'(y_n) - f'(x_n)}{y_n - x_n}\\ 
+        &\approx \dfrac{f'(y_n) - f'(x_n)}{y_n - x_n},
+    \end{aligned}
+\end{equation}
+将公式\ref{eq:second-derivative}代入公式\ref{eq:halley}，使用sympy\footnote{sympy是Python的符号计算库，https://www.sympy.org/en/index.html}（代码见附录1）化简得：
+\begin{equation}
+    \label{eq:my}
+    \begin{cases}
+        y_n &= x_n - \dfrac{f(x)}{f'(x)} \\
+        z_n &= x_n - \dfrac{2f(x_n)}{f'(x_n) + f'(y_n)} \\
+        x_{n+1} &= z_n - \dfrac{f(z_n)}{f'(z_n)}
+    \end{cases}
+\end{equation}
+公式\ref{eq:my}即为本文所提出的方法，由于它使用了差商代替二阶导数，因此需要对收敛阶进行证明。
+
+\subsection{收敛阶证明}
+
+我参考了\cite{kou2006modified}和\cite{eftekhari2014new}使用的技巧对公式\ref{eq:my}的收敛阶进行证明。假设函数$f(x)$的单根是$\alpha$且$f'(\alpha)\neq 0$，记截断误差$e_n = \alpha - x_n$，对$f(x_n)$在$\alpha$处进行泰勒展开得：
+\begin{equation}
+    \label{eq:fx-taylor}
+    \begin{aligned}
+        f(x_n) &= f(\alpha + e_n) \\
+        &= f(\alpha) + f'(\alpha)e_n + \dfrac{1}{2}f''(\alpha)e_n^2+\dfrac{1}{3!}f'''(\alpha)e_n^3+O(e_n^4) \\
+        &= f'(\alpha)\left[e_n + \dfrac{f''(\alpha)e_n^2}{2f'(\alpha)}+\dfrac{f'''(\alpha)e_n^3}{3!f'(\alpha)} + O(e_n^4) \right],
+    \end{aligned}
+\end{equation}
+注意到$f(\alpha)=0$，所以公式中将它消去了，记$c_k=\dfrac{f^{(k)}(\alpha)}{f'(\alpha)k!}$，则有
+\begin{equation}
+    f(x_n) = f'(\alpha)\left[c_1e_n + c_2e_n^2 + c_3e_n^3 + O(e_n^4)\right],
+\end{equation}
+同理对$f'(x_n)$在$\alpha$处进行泰勒展开得：
+\begin{equation}
+    \label{eq:dx}
+    \begin{aligned}
+        f'(x_n) &= f'(\alpha + e_n)\\
+        &= f'(\alpha) + f''(\alpha)e_n + \dfrac{1}{2}f'''(\alpha)e_n^2 + O(e_n^3), \\
+        &=f'(\alpha) [1 + 2c_2e_n + 3c_3e_n^2 + O(e_n^3)]
+    \end{aligned}
+\end{equation}
+希望得到$y_n$的泰勒展开形式，因此首先需要计算：
+\begin{equation}
+    \label{eq:fx-div-dx}
+    \dfrac{f(x_n)}{f'(x_n)} = \dfrac{e_n+c_2e_n^2 + c_3e_n^3 + O(e_n^4)}{1 + 2c_2e_n + 3c_3e_n^2 + O(e_n^3)},
+\end{equation}
+记$\theta = 2c_2e_n + 3c_3e_n^2 + O(e_n^3)$，显然$\lim\limits_{n\to \infty}\theta = 0$，因此在$\theta = 0$处对分母进行泰勒展开有：
+\begin{equation}
+    \label{eq:fenmu-taylor}
+    \begin{aligned}
+        \dfrac{1}{1+\theta} &= 1 - \theta + \theta^2 - \theta^3 + O(\theta^4) \\
+        &= 1 - [2c_2e_n + 3c_3e_n^2 + O(e_n^3)] + [2c_2e_n + 3c_3e_n^2 + O(e_n^3)]^2 \\
+        &\qquad\qquad + [2c_2e_n + 3c_3e_n^2 + O(e_n^3)]^3 + O(e_n^4)\\
+        &= 1 - (2c_2e_n + 3c_3e_n^2) + 4c_2^2e_n^2 + 8c_2^3e_n^3 + O(e_n^4)\\
+        &= 1 - 2c_2e_n + (4c_2^2 - 3c_3)e_n^2 + 8c_2^3e_n^3 + O(e_n^4)
+    \end{aligned}
+\end{equation}
+将公式\ref{eq:fenmu-taylor}代入公式\ref{eq:fx-div-dx}并化简，由于化简过程较为复杂，为了保证准确性，再次使用sympy进行验证（代码见附录2）：
+\begin{equation}
+    \begin{aligned}
+        \dfrac{f(x_n)}{f'(x_n)} &= [e_n+c_2e_n^2 + c_3e_n^3 + O(e_n^4)]\cdot[1 - 2c_2e_n + (4c_2^2 - 3c_3)e_n^2 + 8c_2^3e_n^3 + O(e_n^4)] \\
+        &= e_n - c_2e_n^2 + (2c_2^2 - 2c_3)e_n^3 + O(e_n^4)
+    \end{aligned}
+\end{equation}
+因此求得$y_n$的泰勒展开：
+\begin{equation}
+    \begin{aligned}
+        y_n &= x_n - \dfrac{f(x_n)}{f'(x_n)}\\
+        &= \alpha + e_n - [e_n - c_2e_n^2 + (2c_2^2 - 2c_3)e_n^3 + O(e_n^4)] \\
+        &= \alpha + c_2e_n^2 + (2c_2^2 - 2c_3)e_n^3 + O(e_n^4)
+    \end{aligned}
+\end{equation}
+于是$y_n$的截断误差为$c_2e_n^2 + (2c_2^2 - 2c_3)e_n^3 + O(e_n^4)$，对$f'(y_n)$在$\alpha$处做泰勒展开有：
+\begin{equation}
+    \label{eq:dy}
+    \begin{aligned}
+        f'(y_n) &= f'(\alpha) + [c_2e_n^2 + (2c_2^2 - 2c_3)e_n^3 + O(e_n^4)]f''(\alpha) + O(e_n^4) \\
+        &= f'(\alpha)\left[ 1 + \dfrac{2c_2e_n^2 + 4(c_3 - c_2^2)e_n^3 + O(e_n^4)}{2f'(\alpha)}f''(\alpha) \right] \\
+        &= f'(\alpha)[1 + 2c_2^2e_n^2 + 4c_2(c_3 - c_2^2)e_n^3 + O(e_n^4)],
+    \end{aligned}
+\end{equation}
+将公式\ref{eq:dx}与\ref{eq:dy}相加得到$z_n$的分母部分的泰勒展开：
+\begin{equation}
+    \label{eq:zn-fenmu}
+    f'(x_n) + f'(y_n) = 2f'(\alpha)\left[ 1 + c_2e_n + \left( c_2^2 + \dfrac{3}{2}c_3 \right)e_n^2 + O(e_n^3) \right],
+\end{equation}
+因此将公式\ref{eq:zn-fenmu}与\ref{eq:fx-taylor}相除得到$z_n$的泰勒展开：
+\begin{equation}
+    \begin{aligned}
+        x_n - \dfrac{2f(x_n)}{f'(x_n) + f'(y_n)} &= \alpha + e_n - \dfrac{e_n + c_2e_n^2 + c_3e_n^3 + O(e_n^4)}{1 + c_2e_n+ \left(c_2^2 + \dfrac{3}{2}c_3  \right)e_n^2 + O(e_n^3)}
+    \end{aligned}
+\end{equation}
+使用与公式\ref{eq:fenmu-taylor}相似的技巧，对分母部分进行泰勒展开得：
+\begin{equation}
+    \begin{aligned}
+        x_n - \dfrac{2f(x_n)}{f'(x_n) + f'(y_n)} &= \alpha + e_n - [e_n + c_2e_n^2 + c_3e_n^3 + O(e_n^4)] \\
+        &\quad \left\{ 1 - \left[c_2e_n + \left(c_2^2 + \dfrac{3}{2}c_3  \right)e_n^2 + O(e_n^3)\right]\right. \\
+        &\quad + \left.\left[c_2e_n + \left(c_2^2 + \dfrac{3}{2}c_3  \right)e_n^2 + O(e_n^3)\right]^2 + O(e_n^4) \right\}\\
+        &= \alpha + e_n - [e_n + c_2e_n^2 + c_3e_n^3 + O(e_n^4)]\left[ 1 - c_2e_n - \dfrac{3}{2}c_3e_n^2 + O(e_n^3) \right] \\
+        &= \alpha + \left(c_2^2  + \dfrac{1}{2}c_3 \right)e_n^3 + O(e_n^4)
+    \end{aligned}
+\end{equation}
+可以得到最终$z_n$的误差：
+\begin{equation}
+    z_n - \alpha = \left(c_2^2  + \dfrac{1}{2}c_3 \right)e_n^3 + O(e_n^4)
+\end{equation}
+因此$z_n$是三阶收敛的，由张老师上课所介绍的8阶牛顿法的技巧可知，由于$x_{n+1}$是在$z_n$的基础上使用一次牛顿迭代，因此$x_n$是六阶收敛的。
+
+
+\subsection{方法的扩展}
+
+
+
+
+

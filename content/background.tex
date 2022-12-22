@@ -1,46 +1,94 @@
 
 \section{引言}
 
-使用参考文献的示例\cite{vaswani2017attention}\cite{DBLP:journals/corr/abs-1802-05751}\cite{mott2019towards}\cite{silver2016mastering}.
+本节主要对张老师上课所介绍的构造8阶收敛的牛顿法，和PPT第63页简要介绍Steffensen和Halley方法做一个简要的回顾，作为本文的基础。
 
-插入代码的示例:
+\subsection{8阶收敛的牛顿法}
 
-\begin{lstlisting}[style=sysupython]
-def main():
-    print("hello world")
-\end{lstlisting}
-代码高亮风格可在\texttt{sysulab.sty}中修改.
-\begin{lstlisting}[style=sysucpp]
-#include <iostream>
-using namespace std;
-int main() {
-    printf(123);
-    return 0;
-}
-\end{lstlisting}
-
-伪代码示例：
+使用三次牛顿法反复代入，如公式\ref{eq:eight-newton}所示，可以得到序列$\{y_n\}_{n=0^\infty}$是2阶收敛，$\{z_n\}_{n=0^\infty}$是4阶收敛，因此最终$\{x_n\}_{n=0}^{\infty}$是8阶收敛的，这是一种简单的提高迭代公式阶数的方法。
+\begin{equation}
+    \label{eq:eight-newton}
+    \begin{aligned}
+        y_n = x_n - \dfrac{f(x_n)}{f'(x_n)}\\
+        z_n = y_n - \dfrac{f(y_n)}{f'(y_n)}\\
+        x_{n+1} = z_n - \dfrac{f(z_n)}{f'(z_n)}
+    \end{aligned}
+\end{equation}
 
 
-\begin{algorithm}[!htbp]
-    \caption{水印嵌入算法}
-    \label{algo:embed}
-    \begin{algorithmic}[1] %每行显示行号
-        \Require $A\ (m\times n)$图像矩阵, $W\ (s\times t)$水印矩阵，$C_{mod}$求余常数
-        \Ensure $\hat{A}\ (m\times n)$含水印图像矩阵
-        \Function {EmbedWatermark}{$A,\ W,\ C_{mod}$}
-        \State $cA, cH, cV, cD \gets \Call{computeDWT}{A} $ \Comment{获取DWT各分量}
-        \State $numBlocks \gets \left\lfloor\dfrac{m}{8}\right\rfloor\cdot \left\lfloor\dfrac{n}{8}\right\rfloor$ \Comment{获取分块数量}
-        \ParFor {$i = 0 \to numBlocks$} \Comment{并行计算每个$4\times 4$分块}
-        \State $D \gets \Call{computeDCT}{cA_i} $ \Comment{计算DCT}
-        \State $U, S, V \gets \Call{computeSVD}{D}$ \Comment{计算SVD}
-        \State $b \gets W_{i \mod numBlocks}$ \Comment{对水印进行循环嵌入，获取该分块嵌入的水印1bit}
-        \State $\hat{S_0} = \left(\left\lfloor\dfrac{S_0}{mod}\right\rfloor + \dfrac{1}{4} + \dfrac{b}{2} \right) * C_{mod}$ \Comment{将该bit嵌入到最大奇异值中}
-        \State $\hat{D} \gets U \cdot \hat{S} \cdot V^T$ \Comment{还原DCT系数矩阵}
-        \State $\hat{cA_i} \gets \Call{computeIDCT}{\hat{D}}$ \Comment{DCT逆变换}
-        \EndParFor
-        \State $\hat{A} \gets \Call{computeIDWT}{\hat{cA}, cH, cV, cD}$ \Comment{DWT逆变换}
-        \State \Return $\hat{A}$
-        \EndFunction
-    \end{algorithmic}
-\end{algorithm}
+\subsection{Steffenson方法}
+
+由于在零点附近$\lim\limits_{n\to \infty}f(x_n)=0$，因此可以使用前向差商可以将零点附近的导数近似为：
+\begin{equation}
+    \label{eq:approx-derivative}
+    f'(x)\approx \dfrac{f(x_n+f(x_n))}{f(x_n)}
+\end{equation}
+
+将公式\ref{eq:approx-derivative}代入牛顿迭代公式，可以得到：
+\begin{equation}
+    \label{eq:newton-nodev}
+    x_{n+1}=x_n-\dfrac{f(x_n)^2}{f(x+f(x_n))-f(x_n)}
+\end{equation}
+
+这就是PPT第63页所提到的Steffensen公式，它是也二阶收敛的\cite{jain2007steffensen}，同时避免了求导。
+
+\subsection{Halley方法}
+
+PPT第63页同样提到了三阶收敛的Halley方法和Chebyshev方法，查阅文献\cite{gutierrez1997family}后发现，它们属于同一族方法，具有如下形式：
+\begin{equation}
+    x_{n+1} = x_n-\left( 1 + \dfrac{1}{2}\dfrac{L_f(x_n)}{1-\beta L_f(x_n)} \right) \dfrac{f(x_n)}{f'(x_n)},
+\end{equation}
+其中
+\begin{equation}
+    L_f(x_n) = \dfrac{1}{2}\dfrac{f''(x_n)f(x_n)}{[f'(x_n)]^2}
+\end{equation}
+
+特别的，当$\beta=0$时为Chebyshev方法，$\beta=\frac{1}{2}$时为Halley方法，$\beta=1$时为超Halley方法。不少研究对这族方法进行改进，但是它们都具有\textbf{较为复杂的迭代格式}，如\cite{kou2006modified}提出的一种无三阶收敛的方法：
+\begin{equation}
+    \begin{cases}
+        y_n &= x_n - \theta\dfrac{f(x_n)}{f'(x_n)}, \\
+        x_{n+1} &= x_n - \dfrac{\theta^2 f(x_n)}{(\theta^2 - \theta + 1)f(x_n) - f(y_n)}\dfrac{f(x_n)}{f'(x_n)},\quad (\theta \in \mathbb{R}, \theta \neq 0),
+    \end{cases}
+\end{equation}
+又如\cite{chun2007some}提出的另一种三阶收敛的方法：
+\begin{equation}
+    \begin{cases}
+        w_n & = x_n - \dfrac{f(x_n)}{f'(x_n)}, \\
+        K_\alpha(x_n) & = \dfrac{2f(x_n)f(w_n)(1+\alpha f'^2(x_n))}{f^2(x_n)+\alpha f'^2(x_n)[f(w_n)-f(x_n)]^2}, \quad (\alpha \in \mathbb{R}), \\
+        x_n+1 & = x_n - \left(1+\dfrac{1}{2}\dfrac{K_\alpha(x_n)}{1-\beta K_\alpha(x_n)}\right) \dfrac{f(x_n)}{f'(x_n)}, \quad (\beta \in \mathbb{R}),
+    \end{cases}
+\end{equation}
+
+
+这些方法与同为三阶收敛的其它方法相比，或多或少能减少一些迭代次数，但代价是较为复杂的迭代格式。
+
+\subsection{六阶收敛的方法}
+
+在三阶收敛方法的基础上，再使用一次牛顿迭代或其它二阶迭代法，即可实现六阶收敛的方法。如开山鼻祖\cite{neta1979sixth}中提出的六阶收敛的一族方法：
+\begin{equation}
+    \begin{cases}
+        w_n &= x_n - \dfrac{f(x_n)}{f'(x_n)}, \\
+        z_n &= w_n - \dfrac{f(w_n)}{f'(x_n)}\dfrac{f(x_n)+\beta f(w_n)}{f(x_n) + (\beta - 2)f(w_n)}, \\
+        x_{n+1} &= z_n - \dfrac{f(w_n)}{f'(x_n)}\dfrac{f(x_n)-f(w_n)+\gamma f(z_n)}{f(x_n) - 3f(w_n) + \lambda f(z_n)}
+    \end{cases}
+\end{equation}
+又如\cite{grau2006improvement}中对Ostrowski方法\cite{householder1967solution}改进提出的六阶收敛的方法：
+\begin{equation}
+    \begin{cases}
+        y_n &= x_n - \dfrac{f(x_n)}{f'(x_n)}, \\
+        z_n &= y_n - \dfrac{y_n - x_n}{2f(y_n) - f(x_n)}f(y_n), \\
+        x_{n+1} &= z_n - \dfrac{y_n - x_n}{2f(y_n) - f(x_n)}f(z_n),
+    \end{cases}
+\end{equation}
+又如\cite{soleymani2011new}中提出的用前向差商代替导数的六阶收敛的方法：
+\begin{equation}
+    \begin{cases}
+        w_n &= x_n + f(x_n), \\
+        y_n &= x_n - \dfrac{f(x_n)}{f[x_n, w_n]}, \\
+        z_n &= x_n - \dfrac{f(x_n)}{f[x_n, w_n]}\left( 1 + \dfrac{f(y_n)}{f(x_n)} \left( 1 + 2\dfrac{f(y_n)}{f(x_n)} \right) \right), \\
+        x_{n+1} &= z_n - \dfrac{f(z_n)}{f[y_n, z_n]}\left( 1 - \dfrac{1+f[x_n,w_n]f(z_n)}{f[x_n, w_n]f(w_n)} \right)
+    \end{cases}
+\end{equation}
+
+除此之外，\cite{chun2012new}\cite{solaiman2019two}\cite{narang2016new}等均提出了不同形式的六阶收敛的方法，虽然它们的计算效率较高，但均具有较为复杂的迭代格式。本文希望能建立一种较为简单的迭代格式对Halley方法进行改造，在避免求二阶导数的基础上实现六阶收敛的方法。\textbf{诚信声明，在我所了解到的文献里没有与本文方法相同的，虽然推导和证明过程均有参考它们，也有相应的引用，但皆为原创和独立完成；如有雷同，是我查找资料不周全，没有恶意抄袭的意思。}
+
