@@ -64,16 +64,18 @@ PPT第63页同样提到了三阶收敛的Halley方法和Chebyshev方法，查阅
 
 \subsection{六阶收敛的方法}
 
-在三阶收敛方法的基础上，再使用一次牛顿迭代或其它二阶迭代法，即可实现六阶收敛的方法。如开山鼻祖\cite{neta1979sixth}中提出的六阶收敛的一族方法：
+在三阶收敛方法的基础上，再使用一次牛顿迭代或其它二阶迭代法，即可实现六阶收敛的方法。如最早由\cite{neta1979sixth}提出的六阶收敛方法：
 \begin{equation}
+    \label{eq:NM}
     \begin{cases}
         w_n &= x_n - \dfrac{f(x_n)}{f'(x_n)}, \\
-        z_n &= w_n - \dfrac{f(w_n)}{f'(x_n)}\dfrac{f(x_n)+\beta f(w_n)}{f(x_n) + (\beta - 2)f(w_n)}, \\
-        x_{n+1} &= z_n - \dfrac{f(w_n)}{f'(x_n)}\dfrac{f(x_n)-f(w_n)+\gamma f(z_n)}{f(x_n) - 3f(w_n) + \lambda f(z_n)}
+        z_n &= w_n - \dfrac{f(w_n)}{f'(x_n)} \cdot \dfrac{f(x_n) - \frac{1}{2} f(w_n)}{f(x_n) - \frac{5}{2} f(w_n)}, \\
+        x_{n+1} &= z_n - \dfrac{f(z_n)}{f'(x_n)} \cdot \dfrac{f(x_n)-f(w_n)}{f(x_n) - 3f(w_n)}
     \end{cases}
 \end{equation}
 又如\cite{grau2006improvement}中对Ostrowski方法\cite{householder1967solution}改进提出的六阶收敛的方法：
 \begin{equation}
+    \label{eq:GM}
     \begin{cases}
         y_n &= x_n - \dfrac{f(x_n)}{f'(x_n)}, \\
         z_n &= y_n - \dfrac{y_n - x_n}{2f(y_n) - f(x_n)}f(y_n), \\
