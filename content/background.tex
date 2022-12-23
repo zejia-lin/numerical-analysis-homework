@@ -36,6 +36,7 @@
 
 PPT第63页同样提到了三阶收敛的Halley方法和Chebyshev方法，查阅文献\cite{gutierrez1997family}后发现，它们属于同一族方法，具有如下形式：
 \begin{equation}
+    \label{eq:real-halley}
     x_{n+1} = x_n-\left( 1 + \dfrac{1}{2}\dfrac{L_f(x_n)}{1-\beta L_f(x_n)} \right) \dfrac{f(x_n)}{f'(x_n)},
 \end{equation}
 其中
@@ -43,7 +44,7 @@ PPT第63页同样提到了三阶收敛的Halley方法和Chebyshev方法，查阅
     L_f(x_n) = \dfrac{1}{2}\dfrac{f''(x_n)f(x_n)}{[f'(x_n)]^2}
 \end{equation}
 
-特别的，当$\beta=0$时为Chebyshev方法，$\beta=\frac{1}{2}$时为Halley方法，$\beta=1$时为超Halley方法。不少研究对这族方法进行改进，但是它们都具有\textbf{较为复杂的迭代格式}，如\cite{kou2006modified}提出的一种无三阶收敛的方法：
+特别的，当$\beta=0$时为Chebyshev方法，$\beta=\frac{1}{2}$时为Halley方法，$\beta=1$时为超Halley方法。不少研究对这族方法进行改进，但是它们都具有\textbf{较为复杂的迭代格式}，如\cite{kou2006modified}提出的一种无需求二阶导的三阶收敛的方法：
 \begin{equation}
     \begin{cases}
         y_n &= x_n - \theta\dfrac{f(x_n)}{f'(x_n)}, \\
