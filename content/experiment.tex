@@ -7,7 +7,7 @@
 
 
 
-\begin{table}[!htb]
+\begin{table}[!htbp]
     \centering
     \caption{本文用于测试的函数和零点}
     \label{tab:eval-func}
@@ -28,7 +28,7 @@
 \end{table}
 
 
-\begin{figure}[!htb]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=.9\linewidth]{figure/eval-func.pdf}
     \caption{测试函数在零点附近的图像}
@@ -205,7 +205,7 @@
 
 \subsection{对重根的讨论}
 
-计算收敛阶（Computational order of convergence）\cite{cordero2007variants}是数值方法在实际计算过程中的收敛阶，其定义如下：
+计算收敛阶（COC, Computational order of convergence）\cite{cordero2007variants}是数值方法在实际计算过程中的收敛阶，其定义如下：
 \begin{equation}
     COC = \dfrac{\ln\left( \left| \dfrac{x_{n+1} - x_n}{x_n - x_{n-1}} \right| \right)}{\ln\left( \left| \dfrac{x_n - x_{n-1}}{x_{n-1} - x_{n-2}} \right| \right)}
 \end{equation}
@@ -213,7 +213,7 @@
 
 \begin{table}[!htbp]
     \centering
-    \caption{计算重根时的计算收敛阶}
+    \caption{计算重根时的COC}
     \label{tab:coc}
     \begin{tabular}{cc|c|ccccc}
         \toprule
@@ -232,11 +232,45 @@
     \end{tabular}
 \end{table}
 
+为了加速对重根的收敛，使用PPT第43页对迭代公式进行改造：
+\begin{equation}
+    \label{eq:my-m}
+    \begin{cases}
+        y_n &= x_n - m \cdot \dfrac{f(x)}{f'(x)} \\
+        z_n &= x_n - \dfrac{2f(x_n)}{f'(x_n) + f'(y_n)} \\
+        x_{n+1} &= z_n - m \cdot \dfrac{f(z_n)}{f'(z_n)},
+    \end{cases}
+\end{equation}
+其中$m$是重根次数，同时采用类似方法对GM进行改造。由于时间关系因此没有对改造后的收敛阶进行证明。使用新的迭代公式对具有4阶重根的$f_6$进行实验并考察COC，表\ref{tab:multi-root}展示了实验迭代过程。可以发现这种朴素的改造方法其实只是和牛顿法等效，并没有实现它应有的六阶收敛。因此能保持六阶收敛的对重根的迭代法仍然需要经过推导才能得到，不能这样简单的模仿。
 
 
-\subsection{迭代过程展示}
+\begin{table}[!htbp]
+    \centering
+    \caption{加速重根收敛实验结果}
+    \label{tab:multi-root}
+    \begin{tabular}{c|ccc}
+        \toprule
+        n & 牛顿 & GM & 本文 \\
+        \midrule
+        1 &  -1.0643564356435644 &  -1.0642142761848583 &  -1.0218785203047935 \\
+        2 &  -1.0012164573169233 &  -1.0012111303753073 &  -1.0000362366521056 \\
+        3 &  -1.0000004437505903 &  -1.0000004398734581 &  -1.0000000000984837 \\
+        4 &  -1.0000000000000591 &  -1.0000000000000580 &  -1.0000000000000000 \\
+        5 &  -1.0000000000000000 &  -1.0000000000000000 &                  - \\
+        \bottomrule
+        COC & 2.000 & 2.000 & 2.002 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
-作为补充材料，表\ref{tab:f4}和表\ref{tab:f7}对迭代过程进行了展示。
+
+
+
+
+
+\subsection{部分函数迭代过程展示（作为补充材料）}
+
+% 作为补充材料，表\ref{tab:f4}和表\ref{tab:f7}对一些函数的迭代过程进行了展示。
 
 \begin{table}[!htbp]
     \centering
